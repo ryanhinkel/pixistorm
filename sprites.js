@@ -21,7 +21,7 @@ const createSunnySprite = (x, y) => {
 
 const createRainSprite = (x, y) => {
   const cell = new PIXI.Graphics()
-  cell.beginFill(0xc6b6b3)
+  cell.beginFill(0x635d60)
 
   cell.moveTo(0,0);
   cell.lineTo(cellWidth, 0)
@@ -57,6 +57,6 @@ const weatherMap = {
   [CLOUDS]: createCloudsSprite,
 }
 
-export const createSprite = (weather, coordinate) => {
+export const createSprite = (weather = SUNNY, coordinate) => {
   return weatherMap[weather](coordinate[0], coordinate[1])
 }
