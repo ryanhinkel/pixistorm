@@ -1,49 +1,47 @@
-import * as PIXI from 'pixi.js'
+import { Container, Application } from 'pixi.js'
 import { range, xprod } from 'ramda'
 
-import { createSprite } from './sprites'
+import { Cell } from './board'
 import { weatherOn, SUNNY, RAIN, CLOUDS } from './weather'
 import { choice } from './random'
 
-const app = new PIXI.Application(800, 600, {backgroundColor : 0xFFFFFF});
+const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
 document.body.appendChild(app.view);
 
-const container = new PIXI.Container();
+const container = new Container();
 app.stage.addChild(container);
-
 
 const boardWidth = 10
 const boardHeight = 10
-
-const initCells = (coordinate) => {
-  return {
-    coordinate,
-    sprite: null,
-    weather: choice([SUNNY]),
-  }
-}
-
-const renderCellSprites = cells => {
-  Object.values(cells).forEach(cell => {
-    if (cell.sprite) {
-      container.removeChild(cell.sprite)
-    }
-    const sprite = createSprite(cell.weather, cell.coordinate)
-    cell.sprite = sprite
-    container.addChild(sprite)
-  })
-}
-
 const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
 
-const boardCells = boardCoordinates.reduce((acc, coordinate) => {
-  acc[coordinate] = initCells(coordinate)
-  return acc
-}, {})
+const initState = (coordinates) => {
+  return coordinates.reduce((acc, coordinate) => {
+    acc[coordinate] = {
+      coordinate,
+      weather: choice([SUNNY])
+    }
+    return acc
+  }, {})
+}
+
+const initCells = (coordinates) => {
+  return coordinates.reduce((acc, coordinate) => {
+    acc[coordinate] = new Cell(coordinate, container)
+    return acc
+  }, {})
+}
+
+const state = initState(boardCoordinates)
+const cells = initCells(boardCoordinates)
+console.log(state)
+console.log(cells)
 
 const step = () => {
-  weatherOn(boardCells)
-  renderCellSprites(boardCells)
+  weatherOn(state)
+  boardCoordinates.forEach(coordinate => {
+    cells[coordinate].render(state[coordinate])
+  })
 }
 
 const loop = () => {
@@ -53,5 +51,4 @@ const loop = () => {
   })
 }
 
-renderCellSprites(boardCells)
 loop()
