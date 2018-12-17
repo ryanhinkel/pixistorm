@@ -1,8 +1,8 @@
 import { Container, Graphics } from 'pixi.js'
 import { SUNNY, RAIN, CLOUDS } from './weather'
 
-const cellWidth = 50
-const cellHeight = 50
+const cellWidth = 10
+const cellHeight = 10
 
 export class Board {
   constructor (initialState) {

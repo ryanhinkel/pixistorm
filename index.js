@@ -11,8 +11,8 @@ document.body.appendChild(app.view);
 const container = new Container();
 app.stage.addChild(container);
 
-const boardWidth = 10
-const boardHeight = 10
+const boardWidth = 40
+const boardHeight = 40
 const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
 
 const initState = (coordinates) => {
@@ -34,8 +34,6 @@ const initCells = (coordinates) => {
 
 const state = initState(boardCoordinates)
 const cells = initCells(boardCoordinates)
-console.log(state)
-console.log(cells)
 
 const step = () => {
   weatherOn(state)
