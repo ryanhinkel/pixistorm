@@ -1,3 +1,5 @@
+import { chance } from './random'
+
 export const SUNNY = 'SUNNY'
 export const RAIN = 'RAIN'
 export const CLOUDS = 'CLOUDS'
@@ -33,7 +35,11 @@ export const getNeighbors = (cell, cells) => {
 }
 
 export const analyzeWeather = (neighbors) => {
-  let counts = {}
+  let counts = {
+    [RAIN]: 0,
+    [SUNNY]: 0,
+    [CLOUDS]: 0,
+  }
   neighbors.forEach(neighbor => {
     if (!counts[neighbor.weather]) {
       counts[neighbor.weather] = 0
@@ -56,24 +62,25 @@ export const weatherOn = (cells) => {
 
     // Gets rainy if
     if (
-      (counts[CLOUDS] || 0) + (counts[RAIN] || 0) === 8
+      counts[CLOUDS] + counts[RAIN] === 8
     ) {
       cell.weather = RAIN
 
     // Gets cloudy if
     } else if (
       Math.random() < .001 ||
-      (Math.random() < .1 && counts[CLOUDS] > 0) ||
-      (Math.random() < .2 && counts[CLOUDS] > 1) ||
+      (chance(10) && counts[CLOUDS] > 0) ||
+      (chance(20) && counts[CLOUDS] > 1) ||
       counts[CLOUDS] > 4 &&
-      cell.weather == SUNNY
+      cell.weather === SUNNY
     ) {
       cell.weather = CLOUDS
 
     // Gets sunny if
     } else if (
       counts[RAIN] > 5 ||
-      (counts[SUNNY] > 3 && counts[SUNNY] < 7)
+      (counts[SUNNY] > 3 && counts[SUNNY] < 7) ||
+      (cell.weather === RAIN && counts[SUNNY] > 4)
     ) {
       cell.weather = SUNNY
     }
