@@ -4,6 +4,8 @@ export const CLOUDS = 'CLOUDS'
 export const SNOW = 'SNOW'
 export const HAIL = 'HAIL'
 
+const neighborMap = {}
+
 export const getNeighborsCoordinates = coordinate => {
   const x = coordinate[0]
   const y = coordinate[1]
@@ -16,16 +18,18 @@ export const getNeighborsCoordinates = coordinate => {
 }
 
 export const getNeighbors = (cell, cells) => {
-  const coordinates = getNeighborsCoordinates(cell.coordinate)
-  return coordinates.reduce((acc, coordinate) => {
-    const neighbor = cells[coordinate]
-    if (neighbor) {
-      acc.push(neighbor)
-      return acc
-    } else {
-      return acc
-    }
-  }, [])
+  const { coordinate } = cell
+  if (!neighborMap[coordinate]) {
+    let neighbors = []
+    getNeighborsCoordinates(coordinate).forEach(coordinate => {
+      const neighbor = cells[coordinate]
+      if (neighbor) {
+        neighbors.push(neighbor)
+      }
+    })
+    neighborMap[coordinate] = neighbors
+  }
+  return neighborMap[coordinate]
 }
 
 export const analyzeWeather = (neighbors) => {
