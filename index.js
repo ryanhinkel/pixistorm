@@ -1,37 +1,45 @@
-import { Container, Application, WebGLRenderer } from 'pixi.js'
 import { range, xprod } from 'ramda'
 
 import { Cell } from './board'
 import { weatherOn, SUNNY, RAIN, CLOUDS } from './weather'
 import { choice } from './random'
 
-// const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
-// document.body.appendChild(app.view);
-
-const WIDTH = window.innerWidth - 20;
-const HEIGHT = window.innerHeight - 20;
-
-function setupRenderer() {
-    const renderOptions = {
-        transparent: true
-    }
-    const renderer = new WebGLRenderer(WIDTH, HEIGHT, renderOptions);
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-        canvas.parentElement.removeChild(canvas);
-    }
-    document.body.appendChild(renderer.view)
-    return renderer;
-}
-
-const renderer = setupRenderer();
-const container = new Container();
-
 const boardWidth = 100
 const boardHeight = 100
 
-const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
+const newCanvas = () => {
+  const canvas = document.createElement("canvas")
+  canvas.width = boardWidth*5
+  canvas.height = boardHeight*5
+  canvas.ctx = canvas.getContext("2d")
+  return canvas
+}
 
+const paintCanvas = newCanvas()
+const displayCanvas = newCanvas()
+document.body.appendChild(displayCanvas)
+
+const drawCell = ([x,y]) => {
+  paintCanvas.ctx.fillRect(x*5, y*5, 5, 5)
+}
+
+const draw = () => {
+  const { ctx, width, height } = paintCanvas
+  ctx.fillStyle = "#c4f2fc"
+  ctx.fillRect(0,0,width,height)
+
+  const clouds = window.clouds = boardCoordinates.filter(coordinate => cells[coordinate].weather === CLOUDS)
+  const rain = boardCoordinates.filter(coordinate => cells[coordinate].weather === RAIN)
+
+  ctx.fillStyle = "#cccccc"
+  clouds.forEach(drawCell)
+  ctx.fillStyle = "#635d60"
+  rain.forEach(drawCell)
+
+  displayCanvas.ctx.drawImage(paintCanvas,0,0)
+}
+
+const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
 const initState = (coordinates) => {
   return coordinates.reduce((acc, coordinate) => {
     acc[coordinate] = {
@@ -44,7 +52,7 @@ const initState = (coordinates) => {
 
 const initCells = (coordinates) => {
   return coordinates.reduce((acc, coordinate) => {
-    acc[coordinate] = new Cell(coordinate, container)
+    acc[coordinate] = new Cell(coordinate)
     return acc
   }, {})
 }
@@ -52,13 +60,15 @@ const initCells = (coordinates) => {
 const state = initState(boardCoordinates)
 const cells = initCells(boardCoordinates)
 
+window.cells = cells
+
 const step = () => {
   weatherOn(state)
   boardCoordinates.forEach(coordinate => {
     const key = coordinate.toString()
     cells[key].render(state[key])
   })
-  renderer.render(container);
+  draw()
 }
 
 let go = false
