@@ -62,25 +62,25 @@ export const weatherOn = (cells) => {
 
     // Gets rainy if
     if (
-      counts[CLOUDS] + counts[RAIN] === 8
+      (cell.weather === CLOUDS && counts[CLOUDS] === 8) ||
+      (cell.weather === CLOUDS && counts[RAIN] > 1)
     ) {
       cell.weather = RAIN
 
     // Gets cloudy if
     } else if (
-      Math.random() < .001 ||
-      (chance(10) && counts[CLOUDS] > 0) ||
-      (chance(20) && counts[CLOUDS] > 1) ||
-      counts[CLOUDS] > 4 &&
-      cell.weather === SUNNY
+      cell.weather === SUNNY &&
+      (
+        Math.random() < .001 ||
+        (chance(10) && counts[CLOUDS] > 0) ||
+        (chance(20) && counts[CLOUDS] > 1)
+      )
     ) {
       cell.weather = CLOUDS
 
     // Gets sunny if
     } else if (
-      counts[RAIN] > 5 ||
-      (counts[SUNNY] > 3 && counts[SUNNY] < 7) ||
-      (cell.weather === RAIN && counts[SUNNY] > 4)
+      cell.weather === RAIN
     ) {
       cell.weather = SUNNY
     }

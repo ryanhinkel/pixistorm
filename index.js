@@ -1,18 +1,35 @@
-import { Container, Application } from 'pixi.js'
+import { Container, Application, WebGLRenderer } from 'pixi.js'
 import { range, xprod } from 'ramda'
 
 import { Cell } from './board'
 import { weatherOn, SUNNY, RAIN, CLOUDS } from './weather'
 import { choice } from './random'
 
-const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
-document.body.appendChild(app.view);
+// const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
+// document.body.appendChild(app.view);
 
+const WIDTH = window.innerWidth - 20;
+const HEIGHT = window.innerHeight - 20;
+
+function setupRenderer() {
+    const renderOptions = {
+        transparent: true
+    }
+    const renderer = new WebGLRenderer(WIDTH, HEIGHT, renderOptions);
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+        canvas.parentElement.removeChild(canvas);
+    }
+    document.body.appendChild(renderer.view)
+    return renderer;
+}
+
+const renderer = setupRenderer();
 const container = new Container();
-app.stage.addChild(container);
 
-const boardWidth = 40
-const boardHeight = 40
+const boardWidth = 100
+const boardHeight = 100
+
 const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
 
 const initState = (coordinates) => {
@@ -38,15 +55,23 @@ const cells = initCells(boardCoordinates)
 const step = () => {
   weatherOn(state)
   boardCoordinates.forEach(coordinate => {
-    cells[coordinate].render(state[coordinate])
+    const key = coordinate.toString()
+    cells[key].render(state[key])
   })
+  renderer.render(container);
 }
 
-const loop = () => {
-  requestAnimationFrame(() => {
+let go = false
+const render = () => {
+  if (go) {
     step()
-    loop()
-  })
+  }
+  requestAnimationFrame(render)
 }
 
-loop()
+render()
+
+document.getElementById('step').onclick = () => {
+  console.log(go)
+  go = !go
+}

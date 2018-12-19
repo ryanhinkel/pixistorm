@@ -1,8 +1,8 @@
 import { Container, Graphics } from 'pixi.js'
 import { SUNNY, RAIN, CLOUDS } from './weather'
 
-const cellWidth = 10
-const cellHeight = 10
+const cellWidth = 5
+const cellHeight = 5
 
 export class Board {
   constructor (initialState) {
@@ -42,16 +42,16 @@ export class Cell {
 
     this.container.addChild(cell)
     cell.visible = false
-
     return cell
   }
 
   render (cellState) {
+
     Object.keys(this.sprites).forEach(weather => {
       const sprite = this.sprites[weather]
-      if (weather == cellState.weather && !sprite.visible) {
+      if (weather === cellState.weather && !sprite.visible) {
         sprite.visible = true
-      } else if (weather != cellState.weather && sprite.visible) {
+      } else if (weather !== cellState.weather && sprite.visible) {
         sprite.visible = false
       }
     })
