@@ -28,9 +28,11 @@ const draw = () => {
   ctx.fillStyle = "#c4f2fc"
   ctx.fillRect(0,0,width,height)
 
+  const sunny = boardCoordinates.filter(coordinate => cells[coordinate].weather === SUNNY)
   const clouds = window.clouds = boardCoordinates.filter(coordinate => cells[coordinate].weather === CLOUDS)
   const rain = boardCoordinates.filter(coordinate => cells[coordinate].weather === RAIN)
 
+  sunny.forEach(drawCell)
   ctx.fillStyle = "#cccccc"
   clouds.forEach(drawCell)
   ctx.fillStyle = "#635d60"
