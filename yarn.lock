@@ -573,9 +573,19 @@
   version "10.12.15"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.15.tgz#20e85651b62fd86656e57c9c9bc771ab1570bc59"
 
+"@types/pixi.js@^4.8.5":
+  version "4.8.5"
+  resolved "https://registry.yarnpkg.com/@types/pixi.js/-/pixi.js-4.8.5.tgz#7da559847cd230ad0e032a183587e8ad36a128d0"
+  integrity sha512-kOaixd3W1rvD/oCjmCoNs8jhRf8Ll4wEAu8gwB/pC2joHCr5vvvegC4luIQZMmOnUP5hU7mw1AvnMZXyJl650A==
+
 "@types/q@^1.5.1":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.1.tgz#48fd98c1561fe718b61733daed46ff115b496e18"
+
+"@types/ramda@^0.25.45":
+  version "0.25.45"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.45.tgz#e13456709bb4f2c5fcbfa6dcac8240eff75fe816"
+  integrity sha512-J+xlbNyag7wgYRSuvRwu9zZY7t0vM4KMUVHxWLUMegqlz9+97v6jYo2JlvfsVC3qtulx7PKenFKzWCWsdVSCDw==
 
 "@types/semver@^5.5.0":
   version "5.5.0"
@@ -4180,6 +4190,11 @@ type-check@~0.3.2:
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+
+typescript@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.2.tgz#fe8101c46aa123f8353523ebdcf5730c2ae493e5"
+  integrity sha512-VCj5UiSyHBjwfYacmDuc/NOk4QQixbE+Wn7MFJuS0nRuPQbof132Pw4u53dm264O8LPc2MVsc7RJNml5szurkg==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

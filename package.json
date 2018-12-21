@@ -10,5 +10,10 @@
   },
   "scripts": {
     "start": "parcel index.html"
+  },
+  "devDependencies": {
+    "@types/pixi.js": "^4.8.5",
+    "@types/ramda": "^0.25.45",
+    "typescript": "^3.2.2"
   }
 }
