@@ -1,5 +1,5 @@
 import { Container, Graphics } from 'pixi.js'
-import { SUNNY, RAIN, CLOUDS } from './weather'
+import { WeatherType } from './weather'
 
 const cellWidth = 5
 const cellHeight = 5
