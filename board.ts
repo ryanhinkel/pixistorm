@@ -14,6 +14,9 @@ export class Board {
 }
 
 export class Cell {
+  container: Container,
+  sprites: {[W in WeatherType]: Graphics}
+
   constructor (coordinate, parent) {
     this.container = new Container();
     parent.addChild(this.container)
@@ -23,26 +26,28 @@ export class Cell {
     this.container.y = y * cellHeight
 
     this.sprites = {
-      [SUNNY] : this.drawCell(0xc4f2fc),
-      [CLOUDS]: this.drawCell(0xcccccc),
-      [RAIN]: this.drawCell(0x635d60),
+      [WeatherType.SUNNY] : this.drawCell(0xc4f2fc),
+      [WeatherType.CLOUDS]: this.drawCell(0xcccccc),
+      [WeatherType.RAIN]: this.drawCell(0x635d60),
+      [WeatherType.HAIL]: this.drawCell(0xdddddd),
+      [WeatherType.SNOW]: this.drawCell(0xffffff),
     }
   }
 
-  drawCell (color) {
-    const cell = new Graphics()
-    cell.beginFill(color)
+  drawCell (color): Graphics {
+    const g = new Graphics()
+    g.beginFill(color)
 
-    cell.moveTo(0,0);
-    cell.lineTo(cellWidth, 0)
-    cell.lineTo(cellWidth, cellHeight)
-    cell.lineTo(0, cellHeight)
-    cell.lineTo(0, 0)
-    cell.endFill()
+    g.moveTo(0,0);
+    g.lineTo(cellWidth, 0)
+    g.lineTo(cellWidth, cellHeight)
+    g.lineTo(0, cellHeight)
+    g.lineTo(0, 0)
+    g.endFill()
 
-    this.container.addChild(cell)
-    cell.visible = false
-    return cell
+    this.container.addChild(g)
+    g.visible = false
+    return g
   }
 
   render (cellState) {
