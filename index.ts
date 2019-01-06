@@ -1,9 +1,10 @@
 import { Container, Application, WebGLRenderer } from 'pixi.js'
 import { range, xprod } from 'ramda'
 
-import { Cell } from './board'
+import * as Cell from './cell'
 import { weatherOn, WeatherType } from './weather'
 import { choice } from './random'
+import { Board } from './types'
 
 // const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
 // document.body.appendChild(app.view);
@@ -32,31 +33,22 @@ const boardHeight = 100
 
 const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
 
-const initState = (coordinates) => {
-  return coordinates.reduce((acc, coordinate) => {
-    acc[coordinate] = {
-      coordinate,
-      weather: choice([WeatherType.SUNNY])
-    }
-    return acc
-  }, {})
-}
-
 const initCells = (coordinates) => {
   return coordinates.reduce((acc, coordinate) => {
-    acc[coordinate] = new Cell(coordinate, container)
+    acc[coordinate] = Cell.create(coordinate, container)
     return acc
   }, {})
 }
 
-const state = initState(boardCoordinates)
 const cells = initCells(boardCoordinates)
+const board: Board = { cells }
 
 const step = () => {
-  weatherOn(state)
+  weatherOn(board)
   boardCoordinates.forEach(coordinate => {
     const key = coordinate.toString()
-    cells[key].render(state[key])
+    const cell = cells[key]
+    Cell.render(cell)
   })
   renderer.render(container);
 }

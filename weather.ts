@@ -1,4 +1,7 @@
 import { chance } from './random'
+import { values } from 'ramda'
+import { Board, Cell } from './types'
+
 
 export enum WeatherType {
   SUNNY = 'SUNNY',
@@ -9,6 +12,7 @@ export enum WeatherType {
 }
 
 const neighborMap = {}
+
 
 export const getNeighborsCoordinates = coordinate => {
   const x = coordinate[0]
@@ -51,10 +55,9 @@ export const analyzeWeather = (neighbors) => {
   return counts
 }
 
-export const weatherOn = (cells) => {
-
-  Object.values(cells).forEach(cell => {
-    const neighbors = getNeighbors(cell, cells)
+export const weatherOn = (board: Board) => {
+  values(board.cells).forEach(cell => {
+    const neighbors = getNeighbors(cell, board.cells)
     const counts = analyzeWeather(neighbors)
 
     if (neighbors.length < 8 && cell.weather !== WeatherType.SUNNY) {
@@ -87,5 +90,4 @@ export const weatherOn = (cells) => {
       cell.weather = WeatherType.SUNNY
     }
   })
-  return cells
 }
