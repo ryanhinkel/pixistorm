@@ -48,3 +48,5 @@ const draw = (container: Container, color): Graphics => {
   g.visible = false
   return g
 }
+
+export { Cell } from './types'
