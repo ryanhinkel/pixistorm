@@ -1,36 +1,7 @@
 import { chance } from './random'
 import { values } from 'ramda'
-import { Board, Weather } from './types'
-
-
-const neighborMap = {}
-
-
-export const getNeighborsCoordinates = coordinate => {
-  const x = coordinate[0]
-  const y = coordinate[1]
-
-  return [
-    [x-1, y-1], [x, y-1], [x+1, y-1],
-    [x-1, y],             [x+1, y],
-    [x-1, y+1], [x, y+1], [x+1, y+1],
-  ]
-}
-
-export const getNeighbors = (cell, cells) => {
-  const { coordinate } = cell
-  if (!neighborMap[coordinate]) {
-    let neighbors = []
-    getNeighborsCoordinates(coordinate).forEach(coordinate => {
-      const neighbor = cells[coordinate]
-      if (neighbor) {
-        neighbors.push(neighbor)
-      }
-    })
-    neighborMap[coordinate] = neighbors
-  }
-  return neighborMap[coordinate]
-}
+import { Weather } from './types'
+import * as Board from './board'
 
 export const analyzeWeather = (neighbors) => {
   let counts = {
@@ -47,9 +18,9 @@ export const analyzeWeather = (neighbors) => {
   return counts
 }
 
-export const weatherOn = (board: Board) => {
+export const weatherOn = (board: Board.Board) => {
   values(board.cells).forEach(cell => {
-    const neighbors = getNeighbors(cell, board.cells)
+    const neighbors = Board.getNeighbors(board, cell.coordinate)
     const counts = analyzeWeather(neighbors)
 
     if (neighbors.length < 8 && cell.weather !== Weather.SUNNY) {
