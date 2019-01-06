@@ -22,17 +22,6 @@ export const create = (coordinate, parent): Cell => {
     return { container, sprites, coordinate, weather: Weather.SUNNY }
 }
 
-export const render = (cell: Cell) => {
-  Object.keys(cell.sprites).forEach(weather => {
-    const sprite = cell.sprites[weather]
-    if (weather === cell.weather && !sprite.visible) {
-      sprite.visible = true
-    } else if (weather !== cell.weather && sprite.visible) {
-      sprite.visible = false
-    }
-  })
-}
-
 const draw = (container: Container, color): Graphics => {
   const g = new Graphics()
   g.beginFill(color)
@@ -47,6 +36,17 @@ const draw = (container: Container, color): Graphics => {
   container.addChild(g)
   g.visible = false
   return g
+}
+
+export const setWeather = (cell: Cell, weather: Weather): Cell => {
+  getCurrentSprite(cell).visible = false
+  cell.weather = weather
+  getCurrentSprite(cell).visible = true
+  return cell
+}
+
+const getCurrentSprite = (cell: Cell): Graphics => {
+  return cell.sprites[cell.weather]
 }
 
 export { Cell } from './types'

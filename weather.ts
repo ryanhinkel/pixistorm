@@ -2,6 +2,7 @@ import { chance } from './random'
 import { values } from 'ramda'
 import { Weather } from './types'
 import * as Board from './board'
+import * as Cell from './cell'
 
 export const analyzeWeather = (neighbors) => {
   let counts = {
@@ -24,7 +25,7 @@ export const weatherOn = (board: Board.Board) => {
     const counts = analyzeWeather(neighbors)
 
     if (neighbors.length < 8 && cell.weather !== Weather.SUNNY) {
-      cell.weather = Weather.SUNNY
+      Cell.setWeather(cell, Weather.SUNNY)
       return
     }
 
@@ -33,7 +34,7 @@ export const weatherOn = (board: Board.Board) => {
       (cell.weather === Weather.CLOUDS && counts[Weather.CLOUDS] === 8) ||
       (cell.weather === Weather.CLOUDS && counts[Weather.RAIN] > 1)
     ) {
-      cell.weather = Weather.RAIN
+      Cell.setWeather(cell, Weather.RAIN)
 
     // Gets cloudy if
     } else if (
@@ -44,13 +45,13 @@ export const weatherOn = (board: Board.Board) => {
         (chance(20) && counts[Weather.CLOUDS] > 1)
       )
     ) {
-      cell.weather = Weather.CLOUDS
+      Cell.setWeather(cell, Weather.CLOUDS)
 
     // Gets sunny if
     } else if (
       cell.weather === Weather.RAIN
     ) {
-      cell.weather = Weather.SUNNY
+      Cell.setWeather(cell, Weather.SUNNY)
     }
   })
 }
