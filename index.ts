@@ -1,50 +1,31 @@
-import { Container, WebGLRenderer } from 'pixi.js'
-import { values } from 'ramda'
+import { Container, WebGLRenderer, ticker, UPDATE_PRIORITY } from 'pixi.js'
 
-import * as Cell from './cell'
 import * as Board from './board'
 import { weatherOn } from './weather'
 
 const WIDTH = window.innerWidth - 20;
 const HEIGHT = window.innerHeight - 20;
-
-function setupRenderer() {
-    const renderOptions = {
-        transparent: true
-    }
-    const renderer = new WebGLRenderer(WIDTH, HEIGHT, renderOptions);
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-        canvas.parentElement.removeChild(canvas);
-    }
-    document.body.appendChild(renderer.view)
-    return renderer;
-}
-
-const renderer = setupRenderer();
-const container = new Container();
-
 const boardWidth = 100
 const boardHeight = 100
 
+const renderer = new WebGLRenderer(WIDTH, HEIGHT, { transparent: true });
+document.body.appendChild(renderer.view);
+const container = new Container();
+
 const board = Board.create(container, boardWidth, boardHeight)
 
-const step = () => {
+const _ticker = new ticker.Ticker()
+_ticker.add((_delta) => {
   weatherOn(board)
+})
+
+_ticker.add((_delta) => {
   renderer.render(container)
-}
+}, UPDATE_PRIORITY.LOW)
 
 let go = false
-const render = () => {
-  if (go) {
-    step()
-  }
-  requestAnimationFrame(render)
-}
-
-render()
-
 document.getElementById('step').onclick = () => {
-  console.log(go)
-  go = !go
+    go = !go
+    if (go) { _ticker.start() }
+    else    { _ticker.stop() }
 }
