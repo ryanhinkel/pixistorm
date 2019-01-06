@@ -1,5 +1,7 @@
 import { Container, Graphics } from 'pixi.js'
 
+export type Coordinate = [number, number]
+
 export interface Board {
     cells: { [key: string]: Cell }
 }
