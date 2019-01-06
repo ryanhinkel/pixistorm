@@ -31,7 +31,6 @@ const board = Board.create(container, boardWidth, boardHeight)
 
 const step = () => {
   weatherOn(board)
-  values(board.cells).forEach(Cell.render)
   renderer.render(container)
 }
 
