@@ -1,15 +1,7 @@
 import { chance } from './random'
 import { values } from 'ramda'
-import { Board, Cell } from './types'
+import { Board, Weather } from './types'
 
-
-export enum WeatherType {
-  SUNNY = 'SUNNY',
-  RAIN = 'RAIN',
-  CLOUDS = 'CLOUDS',
-  SNOW = 'SNOW',
-  HAIL = 'HAIL'
-}
 
 const neighborMap = {}
 
@@ -42,9 +34,9 @@ export const getNeighbors = (cell, cells) => {
 
 export const analyzeWeather = (neighbors) => {
   let counts = {
-    [WeatherType.RAIN]: 0,
-    [WeatherType.SUNNY]: 0,
-    [WeatherType.CLOUDS]: 0,
+    [Weather.RAIN]: 0,
+    [Weather.SUNNY]: 0,
+    [Weather.CLOUDS]: 0,
   }
   neighbors.forEach(neighbor => {
     if (!counts[neighbor.weather]) {
@@ -60,34 +52,34 @@ export const weatherOn = (board: Board) => {
     const neighbors = getNeighbors(cell, board.cells)
     const counts = analyzeWeather(neighbors)
 
-    if (neighbors.length < 8 && cell.weather !== WeatherType.SUNNY) {
-      cell.weather = WeatherType.SUNNY
+    if (neighbors.length < 8 && cell.weather !== Weather.SUNNY) {
+      cell.weather = Weather.SUNNY
       return
     }
 
     // Gets rainy if
     if (
-      (cell.weather === WeatherType.CLOUDS && counts[WeatherType.CLOUDS] === 8) ||
-      (cell.weather === WeatherType.CLOUDS && counts[WeatherType.RAIN] > 1)
+      (cell.weather === Weather.CLOUDS && counts[Weather.CLOUDS] === 8) ||
+      (cell.weather === Weather.CLOUDS && counts[Weather.RAIN] > 1)
     ) {
-      cell.weather = WeatherType.RAIN
+      cell.weather = Weather.RAIN
 
     // Gets cloudy if
     } else if (
-      cell.weather === WeatherType.SUNNY &&
+      cell.weather === Weather.SUNNY &&
       (
         Math.random() < .001 ||
-        (chance(10) && counts[WeatherType.CLOUDS] > 0) ||
-        (chance(20) && counts[WeatherType.CLOUDS] > 1)
+        (chance(10) && counts[Weather.CLOUDS] > 0) ||
+        (chance(20) && counts[Weather.CLOUDS] > 1)
       )
     ) {
-      cell.weather = WeatherType.CLOUDS
+      cell.weather = Weather.CLOUDS
 
     // Gets sunny if
     } else if (
-      cell.weather === WeatherType.RAIN
+      cell.weather === Weather.RAIN
     ) {
-      cell.weather = WeatherType.SUNNY
+      cell.weather = Weather.SUNNY
     }
   })
 }

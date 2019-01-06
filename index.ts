@@ -1,9 +1,8 @@
-import { Container, Application, WebGLRenderer } from 'pixi.js'
+import { Container, WebGLRenderer } from 'pixi.js'
 import { range, xprod } from 'ramda'
 
 import * as Cell from './cell'
-import { weatherOn, WeatherType } from './weather'
-import { choice } from './random'
+import { weatherOn } from './weather'
 import { Board } from './types'
 
 // const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
