@@ -1,6 +1,5 @@
 import { Container, Graphics } from 'pixi.js'
-import { WeatherType } from './weather'
-import { Cell } from './types'
+import { Cell, Weather } from './types'
 
 const cellWidth = 5
 const cellHeight = 5
@@ -14,13 +13,13 @@ export const create = (coordinate, parent): Cell => {
     container.y = y * cellHeight
 
     const sprites = {
-      [WeatherType.SUNNY] : draw(container, 0xc4f2fc),
-      [WeatherType.CLOUDS]: draw(container, 0xcccccc),
-      [WeatherType.RAIN]: draw(container, 0x635d60),
-      [WeatherType.HAIL]: draw(container, 0xdddddd),
-      [WeatherType.SNOW]: draw(container, 0xffffff),
+      [Weather.SUNNY] : draw(container, 0xc4f2fc),
+      [Weather.CLOUDS]: draw(container, 0xcccccc),
+      [Weather.RAIN]: draw(container, 0x635d60),
+      [Weather.HAIL]: draw(container, 0xdddddd),
+      [Weather.SNOW]: draw(container, 0xffffff),
     }
-    return { container, sprites, coordinate, weather: WeatherType.SUNNY }
+    return { container, sprites, coordinate, weather: Weather.SUNNY }
 }
 
 export const render = (cell: Cell) => {
