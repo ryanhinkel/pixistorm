@@ -1,10 +1,12 @@
 import { chance } from './random'
 
-export const SUNNY = 'SUNNY'
-export const RAIN = 'RAIN'
-export const CLOUDS = 'CLOUDS'
-export const SNOW = 'SNOW'
-export const HAIL = 'HAIL'
+export enum WeatherType {
+  SUNNY = 'SUNNY',
+  RAIN = 'RAIN',
+  CLOUDS = 'CLOUDS',
+  SNOW = 'SNOW',
+  HAIL = 'HAIL'
+}
 
 const neighborMap = {}
 
@@ -36,9 +38,9 @@ export const getNeighbors = (cell, cells) => {
 
 export const analyzeWeather = (neighbors) => {
   let counts = {
-    [RAIN]: 0,
-    [SUNNY]: 0,
-    [CLOUDS]: 0,
+    [WeatherType.RAIN]: 0,
+    [WeatherType.SUNNY]: 0,
+    [WeatherType.CLOUDS]: 0,
   }
   neighbors.forEach(neighbor => {
     if (!counts[neighbor.weather]) {
@@ -55,34 +57,34 @@ export const weatherOn = (cells) => {
     const neighbors = getNeighbors(cell, cells)
     const counts = analyzeWeather(neighbors)
 
-    if (neighbors.length < 8 && cell.weather !== SUNNY) {
-      cell.weather = SUNNY
+    if (neighbors.length < 8 && cell.weather !== WeatherType.SUNNY) {
+      cell.weather = WeatherType.SUNNY
       return
     }
 
     // Gets rainy if
     if (
-      (cell.weather === CLOUDS && counts[CLOUDS] === 8) ||
-      (cell.weather === CLOUDS && counts[RAIN] > 1)
+      (cell.weather === WeatherType.CLOUDS && counts[WeatherType.CLOUDS] === 8) ||
+      (cell.weather === WeatherType.CLOUDS && counts[WeatherType.RAIN] > 1)
     ) {
-      cell.weather = RAIN
+      cell.weather = WeatherType.RAIN
 
     // Gets cloudy if
     } else if (
-      cell.weather === SUNNY &&
+      cell.weather === WeatherType.SUNNY &&
       (
         Math.random() < .001 ||
-        (chance(10) && counts[CLOUDS] > 0) ||
-        (chance(20) && counts[CLOUDS] > 1)
+        (chance(10) && counts[WeatherType.CLOUDS] > 0) ||
+        (chance(20) && counts[WeatherType.CLOUDS] > 1)
       )
     ) {
-      cell.weather = CLOUDS
+      cell.weather = WeatherType.CLOUDS
 
     // Gets sunny if
     } else if (
-      cell.weather === RAIN
+      cell.weather === WeatherType.RAIN
     ) {
-      cell.weather = SUNNY
+      cell.weather = WeatherType.SUNNY
     }
   })
   return cells

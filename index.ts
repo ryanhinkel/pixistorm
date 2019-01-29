@@ -2,7 +2,7 @@ import { Container, Application, WebGLRenderer } from 'pixi.js'
 import { range, xprod } from 'ramda'
 
 import { Cell } from './board'
-import { weatherOn, SUNNY, RAIN, CLOUDS } from './weather'
+import { weatherOn, WeatherType } from './weather'
 import { choice } from './random'
 
 // const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
@@ -36,7 +36,7 @@ const initState = (coordinates) => {
   return coordinates.reduce((acc, coordinate) => {
     acc[coordinate] = {
       coordinate,
-      weather: choice([SUNNY])
+      weather: choice([WeatherType.SUNNY])
     }
     return acc
   }, {})
