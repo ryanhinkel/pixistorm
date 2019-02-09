@@ -1,46 +1,14 @@
 import { chance } from './random'
-
-export enum WeatherType {
-  SUNNY = 'SUNNY',
-  RAIN = 'RAIN',
-  CLOUDS = 'CLOUDS',
-  SNOW = 'SNOW',
-  HAIL = 'HAIL'
-}
-
-const neighborMap = {}
-
-export const getNeighborsCoordinates = coordinate => {
-  const x = coordinate[0]
-  const y = coordinate[1]
-
-  return [
-    [x-1, y-1], [x, y-1], [x+1, y-1],
-    [x-1, y],             [x+1, y],
-    [x-1, y+1], [x, y+1], [x+1, y+1],
-  ]
-}
-
-export const getNeighbors = (cell, cells) => {
-  const { coordinate } = cell
-  if (!neighborMap[coordinate]) {
-    let neighbors = []
-    getNeighborsCoordinates(coordinate).forEach(coordinate => {
-      const neighbor = cells[coordinate]
-      if (neighbor) {
-        neighbors.push(neighbor)
-      }
-    })
-    neighborMap[coordinate] = neighbors
-  }
-  return neighborMap[coordinate]
-}
+import { values } from 'ramda'
+import { Weather } from './types'
+import * as Board from './board'
+import * as Cell from './cell'
 
 export const analyzeWeather = (neighbors) => {
   let counts = {
-    [WeatherType.RAIN]: 0,
-    [WeatherType.SUNNY]: 0,
-    [WeatherType.CLOUDS]: 0,
+    [Weather.RAIN]: 0,
+    [Weather.SUNNY]: 0,
+    [Weather.CLOUDS]: 0,
   }
   neighbors.forEach(neighbor => {
     if (!counts[neighbor.weather]) {
@@ -51,41 +19,39 @@ export const analyzeWeather = (neighbors) => {
   return counts
 }
 
-export const weatherOn = (cells) => {
-
-  Object.values(cells).forEach(cell => {
-    const neighbors = getNeighbors(cell, cells)
+export const weatherOn = (board: Board.Board) => {
+  values(board.cells).forEach(cell => {
+    const neighbors = Board.getNeighbors(board, cell.coordinate)
     const counts = analyzeWeather(neighbors)
 
-    if (neighbors.length < 8 && cell.weather !== WeatherType.SUNNY) {
-      cell.weather = WeatherType.SUNNY
+    if (neighbors.length < 8 && cell.weather !== Weather.SUNNY) {
+      Cell.setWeather(cell, Weather.SUNNY)
       return
     }
 
     // Gets rainy if
     if (
-      (cell.weather === WeatherType.CLOUDS && counts[WeatherType.CLOUDS] === 8) ||
-      (cell.weather === WeatherType.CLOUDS && counts[WeatherType.RAIN] > 1)
+      (cell.weather === Weather.CLOUDS && counts[Weather.CLOUDS] === 8) ||
+      (cell.weather === Weather.CLOUDS && counts[Weather.RAIN] > 1)
     ) {
-      cell.weather = WeatherType.RAIN
+      Cell.setWeather(cell, Weather.RAIN)
 
     // Gets cloudy if
     } else if (
-      cell.weather === WeatherType.SUNNY &&
+      cell.weather === Weather.SUNNY &&
       (
         Math.random() < .001 ||
-        (chance(10) && counts[WeatherType.CLOUDS] > 0) ||
-        (chance(20) && counts[WeatherType.CLOUDS] > 1)
+        (chance(10) && counts[Weather.CLOUDS] > 0) ||
+        (chance(20) && counts[Weather.CLOUDS] > 1)
       )
     ) {
-      cell.weather = WeatherType.CLOUDS
+      Cell.setWeather(cell, Weather.CLOUDS)
 
     // Gets sunny if
     } else if (
-      cell.weather === WeatherType.RAIN
+      cell.weather === Weather.RAIN
     ) {
-      cell.weather = WeatherType.SUNNY
+      Cell.setWeather(cell, Weather.SUNNY)
     }
   })
-  return cells
 }

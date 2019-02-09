@@ -1,77 +1,31 @@
-import { Container, Application, WebGLRenderer } from 'pixi.js'
-import { range, xprod } from 'ramda'
+import { Container, WebGLRenderer, ticker, UPDATE_PRIORITY } from 'pixi.js'
 
-import { Cell } from './board'
-import { weatherOn, WeatherType } from './weather'
-import { choice } from './random'
-
-// const app = new Application(800, 600, {backgroundColor : 0xFFFFFF});
-// document.body.appendChild(app.view);
+import * as Board from './board'
+import { weatherOn } from './weather'
 
 const WIDTH = window.innerWidth - 20;
 const HEIGHT = window.innerHeight - 20;
-
-function setupRenderer() {
-    const renderOptions = {
-        transparent: true
-    }
-    const renderer = new WebGLRenderer(WIDTH, HEIGHT, renderOptions);
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-        canvas.parentElement.removeChild(canvas);
-    }
-    document.body.appendChild(renderer.view)
-    return renderer;
-}
-
-const renderer = setupRenderer();
-const container = new Container();
-
 const boardWidth = 100
 const boardHeight = 100
 
-const boardCoordinates = xprod(range(0, boardWidth), range(0, boardHeight))
+const renderer = new WebGLRenderer(WIDTH, HEIGHT, { transparent: true });
+document.body.appendChild(renderer.view);
+const container = new Container();
 
-const initState = (coordinates) => {
-  return coordinates.reduce((acc, coordinate) => {
-    acc[coordinate] = {
-      coordinate,
-      weather: choice([WeatherType.SUNNY])
-    }
-    return acc
-  }, {})
-}
+const board = Board.create(container, boardWidth, boardHeight)
 
-const initCells = (coordinates) => {
-  return coordinates.reduce((acc, coordinate) => {
-    acc[coordinate] = new Cell(coordinate, container)
-    return acc
-  }, {})
-}
+const _ticker = new ticker.Ticker()
+_ticker.add((_delta) => {
+  weatherOn(board)
+})
 
-const state = initState(boardCoordinates)
-const cells = initCells(boardCoordinates)
-
-const step = () => {
-  weatherOn(state)
-  boardCoordinates.forEach(coordinate => {
-    const key = coordinate.toString()
-    cells[key].render(state[key])
-  })
-  renderer.render(container);
-}
+_ticker.add((_delta) => {
+  renderer.render(container)
+}, UPDATE_PRIORITY.LOW)
 
 let go = false
-const render = () => {
-  if (go) {
-    step()
-  }
-  requestAnimationFrame(render)
-}
-
-render()
-
 document.getElementById('step').onclick = () => {
-  console.log(go)
-  go = !go
+    go = !go
+    if (go) { _ticker.start() }
+    else    { _ticker.stop() }
 }

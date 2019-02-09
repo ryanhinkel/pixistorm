@@ -1,64 +1,56 @@
-import { Container, Graphics } from 'pixi.js'
-import { WeatherType } from './weather'
+import { xprod, range } from 'ramda'
 
-const cellWidth = 5
-const cellHeight = 5
+import * as Cell from './cell'
+import { Board, Coordinate } from './types'
 
-export class Board {
-  constructor (initialState) {
-  }
+export const create = (container, height, width): Board => {
+  const boardCoordinates = xprod(range(0, width), range(0, height))
 
-  render (state) {
+  const cells = boardCoordinates.reduce((acc, coordinate) => {
+    const s = coordString(coordinate)
+    acc[s] = Cell.create(coordinate, container)
+    return acc
+  }, {})
 
-  }
+  return { cells }
 }
 
-export class Cell {
-  container: Container,
-  sprites: {[W in WeatherType]: Graphics}
+export const getCell = (board: Board, coord: Coordinate): Cell.Cell => {
+  const s = coordString(coord)
+  return board.cells[s]
+}
 
-  constructor (coordinate, parent) {
-    this.container = new Container();
-    parent.addChild(this.container)
+const neighborMap = {}
 
-    const [x, y] = coordinate
-    this.container.x = x * cellWidth
-    this.container.y = y * cellHeight
+export const getNeighborsCoordinates = (coordinate: Coordinate): Coordinate[] => {
+  const x = coordinate[0]
+  const y = coordinate[1]
 
-    this.sprites = {
-      [WeatherType.SUNNY] : this.drawCell(0xc4f2fc),
-      [WeatherType.CLOUDS]: this.drawCell(0xcccccc),
-      [WeatherType.RAIN]: this.drawCell(0x635d60),
-      [WeatherType.HAIL]: this.drawCell(0xdddddd),
-      [WeatherType.SNOW]: this.drawCell(0xffffff),
-    }
-  }
+  return [
+    [x-1, y-1], [x, y-1], [x+1, y-1],
+    [x-1, y],             [x+1, y],
+    [x-1, y+1], [x, y+1], [x+1, y+1],
+  ]
+}
 
-  drawCell (color): Graphics {
-    const g = new Graphics()
-    g.beginFill(color)
+export const getNeighbors = (board: Board, coordinate: Coordinate) => {
+  const cs = coordString(coordinate)
 
-    g.moveTo(0,0);
-    g.lineTo(cellWidth, 0)
-    g.lineTo(cellWidth, cellHeight)
-    g.lineTo(0, cellHeight)
-    g.lineTo(0, 0)
-    g.endFill()
-
-    this.container.addChild(g)
-    g.visible = false
-    return g
-  }
-
-  render (cellState) {
-
-    Object.keys(this.sprites).forEach(weather => {
-      const sprite = this.sprites[weather]
-      if (weather === cellState.weather && !sprite.visible) {
-        sprite.visible = true
-      } else if (weather !== cellState.weather && sprite.visible) {
-        sprite.visible = false
+  if (!neighborMap[cs]) {
+    let neighbors = []
+    getNeighborsCoordinates(coordinate).forEach(c => {
+      const neighbor = getCell(board, c)
+      if (neighbor) {
+        neighbors.push(neighbor)
       }
     })
+    neighborMap[cs] = neighbors
   }
+  return neighborMap[cs]
 }
+
+const coordString = (coord): string => {
+  return coord.toString()
+}
+
+export { Board } from './types'
