@@ -1,23 +1,18 @@
-import { Container, WebGLRenderer, ticker, UPDATE_PRIORITY } from 'pixi.js'
+import { ticker } from 'pixi.js'
 
 import * as Board from './board'
-import { weatherOn } from './weather'
 
-const WIDTH = window.innerWidth - 20;
-const HEIGHT = window.innerHeight - 20;
-const boardWidth = 20
-const boardHeight = 20
+import { entities } from './entity'
+import { renderSystem } from './systems/renderer'
+import { weatherSystem } from './systems/weather'
 
-const renderer = new WebGLRenderer(WIDTH, HEIGHT, { transparent: true });
-document.body.appendChild(renderer.view);
-const container = new Container();
-
-const board = Board.create(container, boardWidth, boardHeight)
+// make entities
+Board.create()
 
 const _ticker = new ticker.Ticker()
 _ticker.add((_delta) => {
-  weatherOn(board)
-  renderer.render(container)
+  weatherSystem(entities)
+  renderSystem(entities)
 })
 
 let go = true

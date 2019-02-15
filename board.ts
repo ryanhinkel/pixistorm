@@ -1,56 +1,28 @@
 import { xprod, range } from 'ramda'
 
-import * as Cell from './cell'
-import { Board, Coordinate } from './types'
+import { Weather } from './types'
 
-export const create = (container, height, width): Board => {
+import { addEntity, addComponent } from './entity'
+
+const width = 50
+const height = 50
+
+export const create = () => {
   const boardCoordinates = xprod(range(0, width), range(0, height))
 
-  const cells = boardCoordinates.reduce((acc, coordinate) => {
-    const s = coordString(coordinate)
-    acc[s] = Cell.create(coordinate, container)
-    return acc
-  }, {})
-
-  return { cells }
-}
-
-export const getCell = (board: Board, coord: Coordinate): Cell.Cell => {
-  const s = coordString(coord)
-  return board.cells[s]
-}
-
-const neighborMap = {}
-
-export const getNeighborsCoordinates = (coordinate: Coordinate): Coordinate[] => {
-  const x = coordinate[0]
-  const y = coordinate[1]
-
-  return [
-    [x-1, y-1], [x, y-1], [x+1, y-1],
-    [x-1, y],             [x+1, y],
-    [x-1, y+1], [x, y+1], [x+1, y+1],
-  ]
-}
-
-export const getNeighbors = (board: Board, coordinate: Coordinate) => {
-  const cs = coordString(coordinate)
-
-  if (!neighborMap[cs]) {
-    let neighbors = []
-    getNeighborsCoordinates(coordinate).forEach(c => {
-      const neighbor = getCell(board, c)
-      if (neighbor) {
-        neighbors.push(neighbor)
-      }
+  const cellEntities = boardCoordinates.map(coordinate => {
+    const entity = addEntity('cell')
+    addComponent(entity.id, {
+      name: 'position',
+      x: coordinate[0],
+      y: coordinate[1],
     })
-    neighborMap[cs] = neighbors
-  }
-  return neighborMap[cs]
-}
+    addComponent(entity.id, {
+      name: 'weather',
+      value: Weather.SUNNY ,
+    })
+    return entity
+  })
 
-const coordString = (coord): string => {
-  return coord.toString()
+  return cellEntities
 }
-
-export { Board } from './types'
