@@ -44,7 +44,6 @@ test("creates a storage array", () => {
   expect(ecs.components).toHaveProperty('Velocity');
 });
 
-
 test("creates two storage arrays", () => {
   let ecs = new ECS();
   let entity = ecs.createEntity();
@@ -67,7 +66,7 @@ test("register system", () => {
   expect(ecs.systems.length).toEqual(1);
 });
 
-test("Velocity", () => {
+test("runs velocity system", () => {
   let ecs = new ECS();
   let entity = ecs.createEntity()
 

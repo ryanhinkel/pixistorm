@@ -47,18 +47,6 @@ export class ECS {
     return entity;
   }
 
-  public setComponent(entity: Entity, component: Component): Entity {
-    const name = component.constructor.name;
-
-    if (!(name in entity.components)) {
-      throw new Error(`Entity does not have a ${name} component`);
-    }
-
-    const index = entity.components[name];
-    this.components[name][index] = component;
-    return entity;
-  }
-
   public run() {
     for (const system of this.systems) {
       const componentIter = transpose(system.components.map(componentClass => {
