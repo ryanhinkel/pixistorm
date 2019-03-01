@@ -6,20 +6,32 @@ class Position {
   y: number;
 }
 
-class Visibility {
-  value: boolean;
+class Velocity {
+  x: number;
+  y: number;
 }
 
 
-test("registering a component type creates a storage array", () => {
-  let ecs = new ECS().registerComponent('positions', new Position);
-  expect(ecs.components).toHaveProperty('positions');
+test("creates a storage array", () => {
+  let ecs = new ECS();
+  let entity = ecs.createEntity();
+  ecs.addComponent(entity, new Velocity);
+  expect(ecs.components).toHaveProperty('Velocity');
 });
 
-test("registering two components", () => {
-  let ecs = new ECS()
-    .registerComponent('positions', new Position)
-    .registerComponent('visibilities', new Visibility);
-  expect(ecs.components).toHaveProperty('positions');
-  expect(ecs.components).toHaveProperty('visibilities');
-})
+
+test("creates two storage arrays", () => {
+  let ecs = new ECS();
+  let entity = ecs.createEntity();
+  ecs.addComponent(entity, new Velocity);
+  ecs.addComponent(entity, new Position);
+  expect(ecs.components).toHaveProperty('Velocity');
+  expect(ecs.components).toHaveProperty('Position');
+});
+
+test("associates entities and components by index", () => {
+  let ecs = new ECS();
+  let entity = ecs.createEntity();
+  ecs.addComponent(entity, new Velocity);
+  expect(entity.components.Velocity == 0);
+});
