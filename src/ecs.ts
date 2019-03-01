@@ -1,13 +1,23 @@
-export class Component {}
+import { ComponentIter } from './ecs';
+import { transpose } from 'ramda';
+
 
 export class Entity {
   components: Record<string, number> = {};
 }
 
+export class Component {}
+export type ComponentIter<T> = T[];
+
+export interface System <T extends Component[]> {
+  components: Component[];
+  onUpdate(componentIter: ComponentIter<T>);
+}
 
 export class ECS {
   public entities: Entity[] = [];
   public components: Record<string, Component[]> = {};
+  public systems: System<any>[] = [];
 
   public createEntity(): Entity {
     const entity = new Entity();
@@ -15,8 +25,13 @@ export class ECS {
     return entity;
   }
 
-  private registerComponent(component: Component): ECS {
+  public registerComponent(component: Component): ECS {
     this.components[component.constructor.name] = [];
+    return this;
+  }
+
+  public registerSystem <T extends Component[]> (system: System<T>): ECS {
+    this.systems.push(system);
     return this;
   }
 
@@ -42,5 +57,15 @@ export class ECS {
     const index = entity.components[name];
     this.components[name][index] = component;
     return entity;
+  }
+
+  public run() {
+    for (const system of this.systems) {
+      const componentIter = transpose(system.components.map(componentClass => {
+        return this.components[componentClass.constructor.name];
+      }));
+
+      system.onUpdate(componentIter as any);
+    }
   }
 }
