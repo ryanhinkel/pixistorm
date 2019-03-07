@@ -1,4 +1,3 @@
-import { ComponentIter } from './ecs';
 import { transpose } from 'ramda';
 
 

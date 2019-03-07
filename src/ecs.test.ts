@@ -24,14 +24,21 @@ class Velocity extends Component {
   }
 }
 
+class Health {
+  value: number;
 
-class VelocitySystem implements System<[Position, Velocity]> {
-  components = [new Position, new Velocity];
+  constructor(value: number = 100) {
+    this.value = value
+  }
+}
 
-  onUpdate(componentIter: ComponentIter<[Position, Velocity]>) {
-    for (let [position, velocity] of componentIter) {
-      position.x += velocity.x;
-      position.y += velocity.y;
+
+class VelocitySystem implements System<[Health, Velocity]> {
+  components = [new Health, new Velocity];
+
+  onUpdate(componentIter: ComponentIter<[Health, Velocity]>) {
+    for (let [health, velocity] of componentIter) {
+
     }
   }
 }
