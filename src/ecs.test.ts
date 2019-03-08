@@ -73,8 +73,11 @@ test("runs velocity system", () => {
   ecs.addComponent(entity, new Position(2, 3));
   ecs.addComponent(entity, new Velocity(4, 5));
   ecs.registerSystem(new VelocitySystem);
-  ecs.run();
 
+  let entity2 = ecs.createEntity()
+  ecs.addComponent(entity2, new Position(2, 3));
+
+  ecs.run();
   const position = ecs.components.Position[entity.components.Position];
   expect(position).toEqual(new Position(6, 8));
 });
